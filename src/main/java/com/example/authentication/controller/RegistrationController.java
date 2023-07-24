@@ -51,8 +51,8 @@ public class RegistrationController {
         return "Token Re-sent";
     }
     
-    @GetMapping("resetPassword")
-    public String resetPassword(@RequestParam PasswordModel passwordModel,HttpServletRequest httpServletRequest){
+    @PostMapping("/resetPassword")
+    public String resetPassword(@RequestBody PasswordModel passwordModel,HttpServletRequest httpServletRequest){
         User user = userService.getUserByEmail(passwordModel.getEmail());
         String url = "";
         if(user!=null){
