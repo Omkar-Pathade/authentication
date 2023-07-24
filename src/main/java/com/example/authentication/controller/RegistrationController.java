@@ -27,7 +27,7 @@ public class RegistrationController {
     private ApplicationEventPublisher publisher;
 
     @PostMapping("/register")
-    public String registerUser(@RequestBody  UserModel userModel, final HttpServletRequest request){
+    public String registerUser(@RequestBody UserModel userModel, final HttpServletRequest request) {
         User user = userService.registerUser(userModel);
         publisher.publishEvent(new RegistrationCompletionEvent(user,
                 applicationUrl(request)));
@@ -35,43 +35,43 @@ public class RegistrationController {
     }
 
     @GetMapping("/verifyRegistration")
-    public String verifyRegistration(@RequestParam("token") String token){
+    public String verifyRegistration(@RequestParam("token") String token) {
         String result = userService.validateUserToken(token);
-        if(result.equalsIgnoreCase(Constants.VALID)){
+        if (result.equalsIgnoreCase(Constants.VALID)) {
             return "User Verified successfully";
         }
         return Constants.BAD_USER;
     }
 
     @GetMapping("/resendverificationtoken")
-    public String resendVerificationToken(@RequestParam("token") String token,HttpServletRequest request){
+    public String resendVerificationToken(@RequestParam("token") String token, HttpServletRequest request) {
         Token newToken = userService.resendVerificationToken(token);
         User user = newToken.getUser();
-        resendVerificationTokenToUser(user,applicationUrl(request),newToken);
+        resendVerificationTokenToUser(user, applicationUrl(request), newToken);
         return "Token Re-sent";
     }
-    
+
     @PostMapping("/resetPassword")
-    public String resetPassword(@RequestBody PasswordModel passwordModel,HttpServletRequest httpServletRequest){
+    public String resetPassword(@RequestBody PasswordModel passwordModel, HttpServletRequest httpServletRequest) {
         User user = userService.getUserByEmail(passwordModel.getEmail());
         String url = "";
-        if(user!=null){
+        if (user != null) {
             String token = UUID.randomUUID().toString();
-            userService.createPasswordResetTokenForUser(user,token);
-            url = passwordResetToken(user,applicationUrl(httpServletRequest),token);
+            userService.createPasswordResetTokenForUser(user, token);
+            url = passwordResetToken(user, applicationUrl(httpServletRequest), token);
         }
         return url;
     }
 
     @PostMapping("/savePassword")
-    public String savePassword(@RequestParam("token") String token,@RequestBody PasswordModel passwordModel){
+    public String savePassword(@RequestParam("token") String token, @RequestBody PasswordModel passwordModel) {
         String result = userService.validatePasswordResetToken(token);
-        if(!result.equalsIgnoreCase(Constants.VALID)){
+        if (!result.equalsIgnoreCase(Constants.VALID)) {
             return Constants.INVALID_TOKEN;
         }
         Optional<User> user = userService.getUserByPasswordResetToken(token);
-        if(user.isPresent()){
-            userService.changePassword(user.get(),passwordModel.getNewPassword());
+        if (user.isPresent()) {
+            userService.changePassword(user.get(), passwordModel.getNewPassword());
             return "Password Reset Successfully";
         }
         return Constants.INVALID_TOKEN;
@@ -79,26 +79,36 @@ public class RegistrationController {
 
     private String passwordResetToken(User user, String applicationUrl, String token) {
         String url = applicationUrl
-                +"savePassword?token="
-                +token;
-        log.info("click the link to Reset account password {}",url);
+                + "savePassword?token="
+                + token;
+        log.info("click the link to Reset account password {}", url);
         return url;
+    }
+
+    @PostMapping("/changePassword")
+    private String changePassword(@RequestBody PasswordModel passwordModel) {
+        User user = userService.getUserByEmail(passwordModel.getEmail());
+        if (!userService.checkIfValidOldPassword(user, passwordModel.getOldPassword())) {
+            return "Invalid Password";
+        }
+        userService.changePassword(user,passwordModel.getNewPassword());
+        return "Password changed successfully";
     }
 
     private void resendVerificationTokenToUser(User user, String applicationUrl, Token newToken) {
 
         String url = applicationUrl
-                +"verifyRegistration?token="
-                +newToken.getToken();
-        log.info("click the link to verify account {}",url);
+                + "verifyRegistration?token="
+                + newToken.getToken();
+        log.info("click the link to verify account {}", url);
     }
 
     private String applicationUrl(HttpServletRequest request) {
         return "http://"
-                +request.getServerName()
-                +":"
-                +request.getServerPort()
-                +"/"
-                +request.getContextPath();
+                + request.getServerName()
+                + ":"
+                + request.getServerPort()
+                + "/"
+                + request.getContextPath();
     }
 }
