@@ -6,10 +6,12 @@ import com.example.authentication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 @Slf4j
+@Component
 public class RegistrationEventListener implements ApplicationListener<RegistrationCompletionEvent> {
 
     @Autowired
