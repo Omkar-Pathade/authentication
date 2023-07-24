@@ -50,7 +50,7 @@ public class RegistrationController {
     private void resendVerificationTokenToUser(User user, String applicationUrl, Token newToken) {
 
         String url = applicationUrl
-                +"verifyRegistration?token"
+                +"verifyRegistration?token="
                 +newToken.getToken();
         log.info("click the link to verify account {}",url);
     }

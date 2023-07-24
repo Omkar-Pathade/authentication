@@ -24,7 +24,7 @@ public class RegistrationEventListener implements ApplicationListener<Registrati
         userService.saveTokenForUser(token,user);
 
         String url = event.getApplicationUrl()
-                +"verifyRegistration?token"
+                +"verifyRegistration?token="
                 +token;
         log.info("click the link to verify account {}",url);
     }
