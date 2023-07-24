@@ -16,4 +16,7 @@ public class Constants {
     public static final String INVALID = "INVALID";
     public static final String EXPIRED = "EXPIRED";
     public static final String BAD_USER = "BAD USER";
+
+    public static final String INVALID_TOKEN = "INVALID TOKEN";
+
 }
