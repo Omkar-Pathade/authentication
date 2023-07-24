@@ -10,7 +10,9 @@ public class Constants {
             "/hello",
             "/register",
             "/verifyRegistration",
-            "/resendverificationtoken"
+            "/resendverificationtoken",
+            "/resetPassword",
+            "/savePassword"
     };
     public static final String VALID = "VALID";
     public static final String INVALID = "INVALID";

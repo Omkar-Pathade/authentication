@@ -63,7 +63,7 @@ public class RegistrationController {
         return url;
     }
 
-    @GetMapping("savePassword")
+    @PostMapping("/savePassword")
     public String savePassword(@RequestParam("token") String token,@RequestBody PasswordModel passwordModel){
         String result = userService.validatePasswordResetToken(token);
         if(!result.equalsIgnoreCase(Constants.VALID)){
